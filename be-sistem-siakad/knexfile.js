@@ -1,20 +1,35 @@
 import { config } from "dotenv";
+
 config();
 
-export default {
+const knexConfig = {
   development: {
-    client: "mysql2",
+    client: String(process.env.DB_CLIENT) || "mysql",
     connection: {
-      host: process.env.DB_HOST || "127.0.0.1",
-      user: process.env.DB_USER || "root",
-      password: process.env.DB_PASS || "",
-      database: process.env.DB_NAME || "siakad_pt"
+      host: String(process.env.DB_HOST) || "localhost",
+      user: String(process.env.DB_USERNAME) || "root",
+      password: String(process.env.DB_PASSWORD) || "",
+      database: String(process.env.DB_NAME) || "",
     },
     migrations: {
-      directory: "./migrations"
+      directory: "./src/migrations",
+      extension: "js",
+      loadExtensions: [".js"],
     },
-    seeds: {
-      directory: "./seeds"
-    }
-  }
+  },
+  production: {
+    client: String(process.env.DB_CLIENT) || "mysql",
+    connection: {
+      host: String(process.env.DB_HOST) || "localhost",
+      user: String(process.env.DB_USERNAME) || "root",
+      password: String(process.env.DB_PASSWORD) || "",
+      database: String(process.env.DB_NAME) || "",
+    },
+    migrations: {
+      directory: "./src/migrations",
+      extension: "js",
+    },
+  },
 };
+
+export default knexConfig;
