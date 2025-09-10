@@ -1,15 +1,15 @@
 import { config } from "dotenv";
-
 config();
 
 const knexConfig = {
   development: {
-    client: String(process.env.DB_CLIENT) || "mysql",
+    client: process.env.DB_CLIENT || "mysql2",
     connection: {
-      host: String(process.env.DB_HOST) || "localhost",
-      user: String(process.env.DB_USERNAME) || "root",
-      password: String(process.env.DB_PASSWORD) || "",
-      database: String(process.env.DB_NAME) || "",
+      host: process.env.DB_HOST || "127.0.0.1",
+      port: process.env.DB_PORT ? Number(process.env.DB_PORT) : 3306,
+      user: process.env.DB_USER || "root",
+      password: process.env.DB_PASS || "",
+      database: process.env.DB_NAME || "siakad_pt",
     },
     migrations: {
       directory: "./src/migrations",
@@ -18,12 +18,13 @@ const knexConfig = {
     },
   },
   production: {
-    client: String(process.env.DB_CLIENT) || "mysql",
+    client: process.env.DB_CLIENT || "mysql2",
     connection: {
-      host: String(process.env.DB_HOST) || "localhost",
-      user: String(process.env.DB_USERNAME) || "root",
-      password: String(process.env.DB_PASSWORD) || "",
-      database: String(process.env.DB_NAME) || "",
+      host: process.env.DB_HOST || "127.0.0.1",
+      port: process.env.DB_PORT ? Number(process.env.DB_PORT) : 3306,
+      user: process.env.DB_USER || "root",
+      password: process.env.DB_PASS || "",
+      database: process.env.DB_NAME || "siakad_pt",
     },
     migrations: {
       directory: "./src/migrations",
