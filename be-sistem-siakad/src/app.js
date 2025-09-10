@@ -4,8 +4,8 @@ import logger from "morgan";
 
 import { setResponseHeader } from "./middleware/set-headers.js";
 
-// import userRoutes from "./routes/userRoutes.js";
-// import authRoutes from "./routes/authRoutes.js";
+import userRoutes from "./routes/userRouters.js";
+import authRoutes from "./routes/authRoutes.js";
 // import masterMesinRoutes from "./routes/masterMesinRoutes.js";
 // import monitorSuhuRouter from "./routes/monitorSuhuRoutes.js";
 
@@ -44,8 +44,8 @@ app.get("/", [setResponseHeader], (req, res) => {
     .json(`Welcome to the server! ${new Date().toLocaleString()}`);
 });
 
-// app.use("/api/user", userRoutes);
-// app.use("/api/auth", authRoutes);
+app.use("/api/user", userRoutes);
+app.use("/api/auth", authRoutes);
 // app.use("/api/master-mesin", masterMesinRoutes);
 // app.use("/api/monitor-suhu", monitorSuhuRouter);
 
