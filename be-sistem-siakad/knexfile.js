@@ -1,19 +1,20 @@
-require('dotenv').config();
+import { config } from "dotenv";
+config();
 
-module.exports = {
+export default {
   development: {
-    client: 'mysql2',
+    client: "mysql2",
     connection: {
-      host: process.env.DB_HOST || '127.0.0.1',
-      user: process.env.DB_USER || 'root',
-      password: process.env.DB_PASS || '',
-      database: process.env.DB_NAME || 'siakad_pt'
+      host: process.env.DB_HOST || "127.0.0.1",
+      user: process.env.DB_USER || "root",
+      password: process.env.DB_PASS || "",
+      database: process.env.DB_NAME || "siakad_pt"
     },
     migrations: {
-      directory: './migrations'
+      directory: "./migrations"
     },
     seeds: {
-      directory: './seeds'
+      directory: "./seeds"
     }
   }
 };
