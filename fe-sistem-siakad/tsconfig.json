@@ -28,7 +28,7 @@
     ".next/types/**/*.ts",
     "**/*.ts",
     "**/*.tsx"
-  ],
+, "app/layout/layout.js", "app/layout/AppTopbar.js", "app/layout/AppSidebar.js", "app/layout/AppMenuitem.js", "app/layout/AppMenu.js", "app/layout/AppFooter.js", "app/layout/AppConfig.js", "app/layout/context/layoutcontext.js", "app/layout/context/menucontext.js"  ],
   "exclude": [
     "node_modules"
   ]

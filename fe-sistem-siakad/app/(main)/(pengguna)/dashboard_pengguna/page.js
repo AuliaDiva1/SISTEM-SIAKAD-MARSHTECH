@@ -1,0 +1,235 @@
+'use client';
+
+import { useEffect, useState } from 'react';
+import { Card } from 'primereact/card';
+import { Chart } from 'primereact/chart';
+import { Tag } from 'primereact/tag';
+import Cookies from 'js-cookie';
+import { useRouter } from 'next/navigation';
+import axios from 'axios';
+import { DataTable } from 'primereact/datatable';
+import { Column } from 'primereact/column';
+
+const API_URL = process.env.NEXT_PUBLIC_API_URL;
+
+const DashboardSiswa = () => {
+  const [data, setData] = useState(null);
+  const [barChartData, setBarChartData] = useState({});
+  const [barChartOptions, setBarChartOptions] = useState({});
+  const [polarChartData, setPolarChartData] = useState({});
+  const [polarChartOptions, setPolarChartOptions] = useState({});
+  const router = useRouter();
+
+  useEffect(() => {
+    axios
+      .get(`${API_URL}/dashboard_siswa`)
+      .then((res) => {
+        const resData = res.data;
+        setData(resData);
+
+        const style = getComputedStyle(document.documentElement);
+
+        const labels = ['Jumlah Siswa', 'Jumlah Kelas', 'Absensi Siswa Hari Ini', 'Laporan Hari Ini'];
+        const values = [
+          resData.totalSiswa ?? 0,
+          resData.totalKelas ?? 0,
+          resData.absensiHariIni ?? 0,
+          resData.laporanHariIni ?? 0,
+        ];
+
+        const backgroundColors = [
+          'rgba(179, 59, 255, 0.2)',
+          'rgba(255, 204, 0, 0.2)',
+          'rgba(6, 146, 62, 0.2)',
+          'rgba(138, 0, 0, 0.2)',
+        ];
+
+        const borderColors = [
+          '#B13BFF',
+          '#FFCC00',
+          '#06923E',
+          '#8A0000',
+        ];
+
+        setBarChartData({
+          labels,
+          datasets: [
+            {
+              label: 'Statistik Siswa',
+              data: values,
+              backgroundColor: backgroundColors,
+              borderColor: borderColors,
+              borderWidth: 1,
+            },
+          ],
+        });
+
+        setBarChartOptions({
+          indexAxis: 'y',
+          plugins: {
+            legend: { display: false },
+          },
+          scales: {
+            x: {
+              beginAtZero: true,
+              ticks: { color: style.getPropertyValue('--text-color') },
+              grid: { color: style.getPropertyValue('--surface-border') },
+            },
+            y: {
+              ticks: { color: style.getPropertyValue('--text-color') },
+            },
+          },
+        });
+
+        setPolarChartData({
+          labels,
+          datasets: [
+            {
+              data: values,
+              backgroundColor: backgroundColors,
+              borderColor: borderColors,
+              borderWidth: 1,
+            },
+          ],
+        });
+
+        setPolarChartOptions({
+          plugins: {
+            legend: {
+              position: 'bottom',
+              labels: { color: style.getPropertyValue('--text-color') },
+            },
+          },
+        });
+      })
+      .catch((err) => {
+        console.error('Gagal ambil data dashboard siswa:', err);
+        setData(null);
+      });
+  }, []);
+
+  const cards = [
+    {
+      title: 'Jumlah Siswa',
+      value: data?.totalSiswa ?? 0,
+      icon: 'pi pi-users',
+      background: 'rgba(179, 59, 255, 0.2)',
+      border: '#B13BFF',
+    },
+    {
+      title: 'Jumlah Kelas',
+      value: data?.totalKelas ?? 0,
+      icon: 'pi pi-briefcase',
+      background: 'rgba(255, 204, 0, 0.2)',
+      border: '#FFCC00',
+    },
+    {
+      title: 'Absensi Siswa Hari Ini',
+      value: data?.absensiHariIni ?? 0,
+      icon: 'pi pi-calendar',
+      background: 'rgba(6, 146, 62, 0.2)',
+      border: '#06923E',
+    },
+    {
+      title: 'Laporan Hari Ini',
+      value: data?.laporanHariIni ?? 0,
+      icon: 'pi pi-book',
+      background: 'rgba(138, 0, 0, 0.2)',
+      border: '#8A0000',
+    },
+  ];
+
+  return (
+    <div className="grid">
+      <div className="card col-12">
+        <h1 className="text-xl font-semibold mb-3">Dashboard Siswa</h1>
+      </div>
+
+      {cards.map((card, i) => (
+        <div className="col-12 md:col-6 xl:col-3" key={i}>
+          <Card className="shadow-md" style={{ borderTop: `4px solid ${card.border}` }}>
+            <div className="flex justify-content-between">
+              <div>
+                <span className="block text-500 mb-2">{card.title}</span>
+                <span className="text-900 font-bold text-xl md:text-2xl">{card.value}</span>
+              </div>
+              <div>
+                <div
+                  className="flex align-items-center justify-content-center border-round"
+                  style={{
+                    width: '2.5rem',
+                    height: '2.5rem',
+                  }}
+                >
+                  <i className={`${card.icon} text-xl`} />
+                </div>
+                <Tag value="Live" severity="info" />
+              </div>
+            </div>
+          </Card>
+        </div>
+      ))}
+
+      <div className="col-12 md:col-6">
+        <Card>
+          <div className="flex justify-content-between mb-5">
+            <span className="font-medium text-lg text-900">Perbandingan Data Siswa</span>
+            <Tag value="Live" severity="info" />
+          </div>
+          <Chart type="polarArea" data={polarChartData} options={polarChartOptions} className="w-full" />
+        </Card>
+      </div>
+
+      <div className="col-12 md:col-6">
+        <Card>
+          <div className="flex justify-content-between mb-3">
+            <span className="font-medium text-lg text-900">Statistik Siswa</span>
+            <Tag value="Live" severity="info" />
+          </div>
+          <Chart type="bar" data={barChartData} options={barChartOptions} className="w-full" />
+        </Card>
+
+        <Card>
+          <div className="flex justify-content-between mb-3">
+            <span className="font-medium text-lg text-900">Absensi Siswa Hari Ini</span>
+            <Tag value="Live" severity="info" />
+          </div>
+          <DataTable value={data?.absensiSiswa ?? []} paginator rows={3} responsiveLayout="scroll">
+            <Column field="NAMA_SISWA" header="Nama Siswa" sortable />
+            <Column
+              field="TANGGAL"
+              header="Tanggal"
+              sortable
+              body={(rowData) => {
+                const date = new Date(rowData.TANGGAL);
+                return date.toLocaleDateString('id-ID', {
+                  day: '2-digit',
+                  month: 'long',
+                  year: 'numeric',
+                });
+              }}
+            />
+            <Column
+              field="STATUS"
+              header="Status"
+              sortable
+              body={(rowData) => {
+                switch (rowData.STATUS) {
+                  case "Hadir":
+                    return <Tag severity="success" value="Hadir" />;
+                  case "Sakit":
+                    return <Tag severity="warning" value="Sakit" />;
+                  default:
+                    return <Tag severity="secondary" value={rowData.STATUS} />;
+                }
+              }}
+            />
+            <Column field="KETERANGAN" header="Keterangan" />
+          </DataTable>
+        </Card>
+      </div>
+    </div>
+  );
+};
+
+export default DashboardSiswa;
