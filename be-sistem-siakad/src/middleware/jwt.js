@@ -1,7 +1,7 @@
 import "dotenv/config";
 
 import * as jose from "jose";
-import { datetime, status } from "../tools/general.js";
+import { datetime, status } from "../utils/general.js";
 
 export const verifyToken = async (req, res, next) => {
   try {
@@ -16,7 +16,7 @@ export const verifyToken = async (req, res, next) => {
       });
     }
 
-    const secretKey = new TextEncoder().encode(process.env.SECRET_KEY);
+    const secretKey = new TextEncoder().encode(process.env.JWT_SECRET);
 
     const { payload } = await jose.jwtVerify(token, secretKey, {
       algorithms: ["HS512"],
